@@ -7,7 +7,7 @@ type Rectangle struct {
 }
 
 //Perimeter returns the perimeter of a rectangle
-func Perimeter(rect Rectangle) float64 {
+func (rect Rectangle) Perimeter() float64 {
 	if rect.width <= 0.0 || rect.height <= 0.0 {
 		return 0.0
 	}
@@ -15,7 +15,7 @@ func Perimeter(rect Rectangle) float64 {
 }
 
 //Area returns the area of a rectangle
-func Area(rect Rectangle) float64 {
+func (rect Rectangle) Area() float64 {
 	if rect.width <= 0.0 || rect.height <= 0.0 {
 		return 0.0
 	}
