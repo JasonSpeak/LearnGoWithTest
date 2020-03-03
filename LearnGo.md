@@ -104,3 +104,47 @@ func TestArea(t *testing.T) {
 #### 从现有的类型中创建新的类型
 - 用于为值添加更多的领域内特定的含义
 - 可以让你实现接口
+
+### Maps
+#### 用法
+- map用法为`map[type1]type2`
+- 例如：`map[string]string`，定义了一个key为string类型，value为string类型的map
+
+#### 特性
+- map查找可以返回两个值,若要查询的key-vlaue存在，则第一个值为查到的value，第二个值为`bool`值`true`;否则第一个值为空，第二个值为`false`
+- 例如:
+```golang
+dictionary map[string]string
+value,result := dictionary[key]
+```
+- map是引用类型，所以不需要指针传递就可以修改原数据
+- 由于map是引用类型，所以map可以是`nil`值，如果使用一个nil的map，就会得到nil指针异常，导致程序终止
+- 所以永远不要初始化一个空的map变量,例如`var m map[string]string`
+- 可以通过下列方法初始化空map
+```golang
+dictionary = map[string]string{}
+
+// OR
+
+dictionary = make(map[string]string)
+```
+- 这两种方法都可以创建一个空的 hash map 并指向 dictionary。这确保永远不会获得 nil 指针异常
+
+### Mocking
+- 反引号语法是创建string的另一种形式，例如
+```golang
+want := `3 
+2
+1
+GO!`
+```
+
+### 并发
+- goroutines 是 Go 的基本并发单元，它让我们可以同时运行多项任务
+- anonymous functions（匿名函数），我们用它来启动每个并发进程
+- channels，用来组织和控制不同进程之间的交流，使我们能够避免 race condition（竞争条件）(锁) 的问题。
+- the race detector（竞争探测器） 帮助我们调试并发代码的问题。
+
+#### channels
+- channel 内部就是一个带锁的队列
+- https://www.cnblogs.com/oxspirt/p/7124291.html
