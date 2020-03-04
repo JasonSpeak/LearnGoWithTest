@@ -148,3 +148,11 @@ GO!`
 #### channels
 - channel 内部就是一个带锁的队列
 - https://www.cnblogs.com/oxspirt/p/7124291.html
+
+#### Select 
+- 可帮助你同时在多个 channel 上等待。
+- 有时你想在你的某个「案例」中使用 time.After 来防止你的系统被永久阻塞
+
+#### httptest标准库
+- 一种方便地创建测试服务器的方法，这样你就可以进行可靠且可控的测试。
+- 使用和 net/http 相同的接口作为「真实的」服务器会和真实环境保持一致，并且只需更少的学习。
