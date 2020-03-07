@@ -23,6 +23,8 @@ type Player struct {
 	Wins int
 }
 
+const jsonContentType = "application/json"
+
 func NewPlayerServer(store PlayerStore) *PlayerServer {
 	p := new(PlayerServer)
 	p.store = store
@@ -36,8 +38,8 @@ func NewPlayerServer(store PlayerStore) *PlayerServer {
 }
 
 func (p *PlayerServer) leagueHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("content-type", "application/json")
 	json.NewEncoder(w).Encode(p.store.GetLeague())
+	w.Header().Set("content-type", jsonContentType)
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -46,8 +48,10 @@ func (p *PlayerServer) playersHandler(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodPost:
+		fmt.Println("Method is Post")
 		p.processWin(w, player)
 	case http.MethodGet:
+		fmt.Println("Method is Get")
 		p.showScore(w, player)
 	}
 }
