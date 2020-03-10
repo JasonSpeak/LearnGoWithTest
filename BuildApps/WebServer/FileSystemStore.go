@@ -7,12 +7,11 @@ import (
 
 type FileSystemStore struct {
 	database io.ReadWriteSeeker
+	league   League
 }
 
 func (f *FileSystemStore) GetLeague() League {
-	f.database.Seek(0, 0)
-	league, _ := NewLeague(f.database)
-	return league
+	return f.league
 }
 
 func (f *FileSystemStore) GetPlayerScore(name string) int {
