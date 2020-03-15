@@ -50,5 +50,5 @@ zadd [key] [score1] [member1]
 zadd [key] [score2] [member2]
 zadd [key] [score3] [member3]
 #读取数据
-zrange [key] [leftIndex] [rightIndex]
+zrange [key] [leftIndex] [rightIndexOK]
 ```

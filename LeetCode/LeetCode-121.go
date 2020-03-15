@@ -25,5 +25,5 @@ package main
 import "fmt"
 
 func maxProfit(prices []int) int {
-	
+
 }
