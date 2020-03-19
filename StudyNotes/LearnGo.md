@@ -148,10 +148,103 @@ GO!`
 #### channels
 - channel 内部就是一个带锁的队列
 - https://www.cnblogs.com/oxspirt/p/7124291.html
+- https://www.cnblogs.com/wdliu/p/9272220.html
+- channel分为三种类型
+    - 只读chan：`var readOnlyChan <-chan int`(使用`<-chan`定义)
+    - 只写chan：`var writeOnlyChan chan<- int`(使用`chan<-`定义)
+    - 读写chan: `var normalchan chan int`(使用`chan`定义)
+- 一般定义只读和只写的管道意义不大，更多时候我们可以在参数传递时候指明管道可读还是可写，即使当前管道是可读写的。
+```go
+//只能向channel中存数据
+func send(c chan<- int) {
+    for i := 0; i < 10; i++ {
+        c <- i
+    }
+}
+//只能取channel中的数据
+func get(c <-chan int) {
+    for i := range c {
+        fmt.Println(i)
+    }
+}
+func main() {
+    c := make(chan int)
+    go send(c)
+    go get(c)
+    time.Sleep(time.Second*1)
+}
+```
+
+- 需要注意的是：
+    - 管道如果未关闭，在读取超时会则会引发deadlock异常
+    - 管道如果关闭进行写入数据会pannic
+    - 当管道中没有数据时候再行读取或读取到默认值，如int类型默认值是0
+    - 使用range循环管道，如果管道未关闭会引发deadlock错误。
+    - 如果采用for死循环已经关闭的管道，当管道没有数据时候，读取的数据会是管道的默认值，并且循环不会退出。
+```go
+ch:= make(chan int,10)
+ch<-"value"         //写数据
+value := <-ch       //读数据
+value,ok := <-ch    //优雅地读数据
+close(ch)           //关闭管道
+```
+
+- 带缓冲区channe和不带缓冲区channel
+    - 带缓冲区chan: 定义时声明了缓冲区大小(长度),可以保存多个数据
+    - 不带缓冲区chan: 定义时未声明缓冲区，只能存一个数据，只有当该数据被取出时才能存下一个数据
+```go
+ch := make(chan int,10) //带缓冲区的chan
+ch := make(chan int)    //不带缓冲区的chan
+```
+
+- channel频率控制
+    - 在对channel进行读写的时，go还提供了非常人性化的操作，那就是对读写的频率控制，通过time.Ticke实现
+```go
+func main(){
+    requests:= make(chan int ,5)
+    for i:=1;i<5;i++{
+        requests<-i
+    }
+    close(requests)
+    limiter := time.Tick(time.Second*1)
+    for req:=range requests{
+        <-limiter
+        fmt.Println("requets",req,time.Now()) //执行到这里，需要隔1秒才继续往下执行，time.Tick(timer)上面已定义
+    }
+}
+```
+
 
 #### Select 
 - 可帮助你同时在多个 channel 上等待。
 - 有时你想在你的某个「案例」中使用 time.After 来防止你的系统被永久阻塞
+- select-case实现非阻塞channel
+    - 原理通过select+case加入一组管道，当满足（这里说的满足意思是有数据可读或者可写)select中的某个case时候，那么该case返回，若都不满足case，则走default分支。
+```go
+func send(c chan int)  {
+    for i :=1 ; i<10 ;i++  {
+     c <-i
+     fmt.Println("send data : ",i)
+    }
+}
+
+func main() {
+    resch := make(chan int,20)
+    strch := make(chan string,10)
+    go send(resch)
+    strch <- "wd"
+    select {
+    case a := <-resch:
+        fmt.Println("get data : ", a)
+    case b := <-strch:
+        fmt.Println("get data : ", b)
+    default:
+        fmt.Println("no channel actvie")
+
+    }
+
+}
+```
 
 #### httptest标准库
 - 一种方便地创建测试服务器的方法，这样你就可以进行可靠且可控的测试。
@@ -174,3 +267,5 @@ type PlayerServer struct {
 - 路由。标准库为你提供了易于使用的类型来处理路由。它完全支持 http.Handler 接口，因为你可以将路由分配给 Handler，而路由本身也是 Handler。它没有你可能期望的某些特性，例如路径变量（例如 /users/{id}）。你可以自己轻易地解析这些信息，但如果它成了负担，你可能会考虑查看其它路由库。大多数流行的库都坚持标准库的实现 http.Handler 的理念。
 - 类型嵌入。我们对这项技术略有提及，但你可以从 Effective Go 了解更多信息。如果你应该从中得到一个收获，那就是它极其有用，但是 总是考虑你的公开 API，只有适合被公开的才公开。
 - JSON 反序列化和序列化。标准库使得序列化和反序列化数据变得非常简单。它也是开放的配置，你可以根据需要自定义这些数据转换的工作方式。
+
+
