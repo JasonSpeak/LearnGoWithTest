@@ -1,5 +1,10 @@
 package main
 
+import (
+	"math"
+	"strings"
+)
+
 func myAtoi(str string) int {
 	return convert(clean(str))
 }

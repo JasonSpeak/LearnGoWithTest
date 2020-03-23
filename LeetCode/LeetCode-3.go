@@ -13,7 +13,7 @@ func lengthOfLongestSubstring(s string) int {
 		if currentIndex := strings.IndexByte(s1, s[right]); currentIndex != -1 {
 			left += currentIndex + 1
 		}
-		s1 = s[left:right]
+		s1 = s[left : right+1]
 		if len(s1) > length {
 			length = len(s1)
 		}

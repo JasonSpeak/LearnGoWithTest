@@ -17,11 +17,11 @@ func deleteDuplicates(head *ListNode) *ListNode {
 	}
 
 	fastPoint := newHead.Next
-	latePoint := newhead
+	latePoint := newHead
 
 	for fastPoint.Next != nil {
 		if fastPoint.Next != nil && fastPoint.Val == fastPoint.Next.Val {
-			for fastPoint.Val == fastPoint.Next.Val && fastPoint.Next != nil {
+			for fastPoint.Next != nil && fastPoint.Val == fastPoint.Next.Val {
 				fastPoint = fastPoint.Next
 			}
 			fastPoint = fastPoint.Next
