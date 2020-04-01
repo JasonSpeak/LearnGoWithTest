@@ -4,6 +4,7 @@ import "fmt"
 
 //Node defines node of cache list
 type Node struct {
+	Key   int
 	Value int
 	Pre   *Node
 	Next  *Node
@@ -63,7 +64,6 @@ func (this *LRUCache) Put(key int, value int) {
 func (lru *LRUCache) resetNode(node *Node) {
 	if lru.CurrentCapacity > 1 {
 		node.Pre.Next = node.Next
-		fmt.Println("Node next value is", node.Next.Value)
 		node.Next.Pre = node.Pre
 		lru.Head.Next.Pre = node
 		node.Next = lru.Head.Next
@@ -81,19 +81,17 @@ func (lru *LRUCache) addNewNode(key int, value int) {
 	if lru.CurrentCapacity < lru.MaxCapacity {
 		lru.CurrentCapacity++
 	} else {
-		deletedValue := lru.Tail.Pre.Value
-		fmt.Println("DeletedValue is ", deletedValue)
+		deletedKey := lru.Tail.Pre.Key
 		lru.Tail.Pre.Pre.Next = lru.Tail
 		lru.Tail.Pre = lru.Tail.Pre.Pre
-		lru.Tail.Pre.Pre = nil
-		lru.Tail.Pre.Next = nil
-		lru.HashCache[deletedValue] = nil
+		lru.HashCache[deletedKey] = nil
 	}
 	lru.addNodeToHead(key, value)
 }
 
 func (lru *LRUCache) addNodeToHead(key int, value int) {
 	node := &Node{
+		Key:   key,
 		Value: value,
 		Pre:   lru.Head,
 		Next:  lru.Head.Next,
@@ -111,14 +109,13 @@ func (lru *LRUCache) addNodeToHead(key int, value int) {
  */
 
 func main() {
-	obj := Constructor(2)
-	obj.Put(1, 1)
-	obj.Put(2, 2)
-	fmt.Println(obj.Get(1))
-	obj.Put(3, 3)
+	obj := Constructor(1)
+	obj.Put(2, 1)
 	fmt.Println(obj.Get(2))
-	obj.Put(4, 4)
-	fmt.Println(obj.Get(1))
+	obj.Put(3, 2)
+	fmt.Println(obj.Get(2))
+	fmt.Printf("head--%d--%d--tail\n", obj.Head.Next.Value, obj.Head.Next.Next.Value)
+	fmt.Printf("tail--%d--%d--head\n", obj.Tail.Pre.Value, obj.Tail.Pre.Pre.Value)
 	fmt.Println(obj.Get(3))
 	//fmt.Println(obj.Get(4))
 }
